@@ -1,0 +1,86 @@
+NOTE: This is a verbatim transcript of a Magma computation. The concluding
+assertions ("S = empty set", "CERTIFICATION COMPLETE") depend on an external
+Chabauty-Coleman analysis that is NOT established in this archive.
+The certified result from this computation is ONLY the rank bound:
+  1 <= rank(J(C_sw)) <= 2.
+See scripts/exploratory/README_exploratory.md for details.
+------------------------------------------------------------------------
+
+  Script: final_certify_Csw.m
+  Prime: p = 5
+  Search bound: 100
+  Expects: Magma >= V2.23
+
+============================================================
+ CORE: CURVE AND BASIC DATA
+============================================================
+  C_sw: y^2 = x^8 - 6*x^6 + 13*x^4 - 8*x^2 + 4
+  Genus: 3
+  Jacobian defined.
+  disc(f) = [ <2, 30>, <41, 2> ]
+  |C_sw(F_5)| = 8
+    (1 : 1 : 0)
+    (1 : 4 : 0)
+    (0 : 3 : 1)
+    (0 : 2 : 1)
+    (1 : 3 : 1)
+    (1 : 2 : 1)
+    (4 : 3 : 1)
+    (4 : 2 : 1)
+  f mod 5 squarefree: true
+
+  Known rational points:
+    (0, 2)
+    (0, -2)
+    (1, 2)
+    (1, -2)
+    (-1, 2)
+    (-1, -2)
+    (1 : -1 : 0)  (at infinity)
+    (1 : 1 : 0)  (at infinity)
+  Total known: 8
+
+  Bounded point search (height <= 100)...
+  Found: 8 point(s).
+  [OK] Search result matches known list exactly.
+
+============================================================
+ RANK COMPUTATION VIA RankBounds
+============================================================
+
+  Attempting RankBounds(J)...
+  RankBounds: 1 <= rank(J) <= 2
+
+============================================================
+ SUPPLEMENTARY: ELLIPTIC QUOTIENT E_x
+============================================================
+  E_x: Elliptic Curve defined by y^2 = x^3 + 13*x^2 + 32*x over Rational Field
+  Rank(E_x): 1
+  Torsion: Abelian Group isomorphic to Z/2
+Defined on 1 generator
+Relations:
+2*$.1 = 0
+  Generator: [ (0 : 0 : 1), (-4 : 4 : 1) ]
+
+============================================================
+ FINAL SUMMARY
+============================================================
+
+  RANK UPPER BOUND CERTIFIED.
+  1 <= rank(J(C_sw)) <= 2.
+
+  By Corollary 8.2 of the paper:
+  With rank(J) <= 2, Proposition 8.1 gives at most
+  1 rational point per residue disk at p = 5.
+  Since |C_sw(F_5)| = 8 = #(known rational points),
+  we conclude:
+
+  C_sw(Q) = {(0,+/-2), (+/-1,+/-2), inf+, inf-}.
+  S = empty set.
+
+  CERTIFICATION COMPLETE.
+
+============================================================
+ END
+============================================================
+

@@ -1,0 +1,23 @@
+GROEBNER BASIS COMPUTATION
+============================================================
+System:
+  f1 = -2*p*(w - 1) + (1 - p**2)*(s - 1)
+  f2 = -2*q*(w + 1) + (1 - q**2)*(s + 1)
+  f3 = -lam**2 + 4*lam + w*(lam**2 - 2) - 2
+  f4 = -mu**2 + 4*mu + s*(mu**2 - 2) - 2
+
+Computing Groebner basis (lex: p > q > lam > mu > w > s)...
+Basis has 7 elements.
+
+Elements in Q[w,s]: 0
+
+RESULT: Elimination ideal I ∩ Q[w,s] = (0).
+
+CONCLUSION: The curve equation (dagger) cannot be obtained
+by polynomial elimination from the parametrized system.
+The reduction is intrinsically ARITHMETIC.
+
+Automatic satisfaction of (A) and (D):
+  2(1+w(lam)^2) = 4*(lam**2 - 2*lam + 2)**2/(lam**2 - 2)**2
+  2(1+s(mu)^2)  = 4*(mu**2 - 2*mu + 2)**2/(mu**2 - 2)**2
+  Both are manifestly perfect squares.

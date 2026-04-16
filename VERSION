@@ -1,0 +1,5 @@
+Version: v1.1
+Date: 2026-04-16
+Description: Audit-corrected release. Fixes overclaims in search coverage,
+removes unsupported S=emptyset assertions, downgrades incomplete proofs,
+moves unverified Chabauty/Magma certification scripts to exploratory status.
