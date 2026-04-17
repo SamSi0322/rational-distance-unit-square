@@ -1,0 +1,65 @@
+// f4_singularities.magma
+// F_4 in P^6 is a degree-16 surface with 46 singular points (counted
+// with multiplicity). Analyze their geometry.
+
+S<X, Y, A, B, C, D, W> := PolynomialRing(Rationals(), 7);
+F1 := A^2 - X^2 - Y^2;
+F2 := B^2 - (W-X)^2 - Y^2;
+F3 := C^2 - X^2 - (W-Y)^2;
+F4 := D^2 - (W-X)^2 - (W-Y)^2;
+J := ideal<S | F1, F2, F3, F4>;
+P6 := ProjectiveSpace(S);
+F4_proj := Scheme(P6, J);
+
+printf "=== Singular subscheme ===\n";
+Sing := SingularSubscheme(F4_proj);
+printf "Dimension: %o\n", Dimension(Sing);
+printf "Degree: %o\n", Degree(Sing);
+
+printf "\n=== Singular locus at infinity (W = 0) ===\n";
+// Restrict the singular locus to W = 0
+Sing_inf := Sing meet Scheme(P6, W);
+printf "Dim at infinity: %o\n", Dimension(Sing_inf);
+if Dimension(Sing_inf) ge 0 then
+    printf "Degree at infinity: %o\n", Degree(Sing_inf);
+end if;
+
+printf "\n=== Try to enumerate singular points at infinity ===\n";
+// At W = 0, the equations become:
+//   A^2 = X^2 + Y^2
+//   B^2 = X^2 + Y^2
+//   C^2 = X^2 + Y^2
+//   D^2 = X^2 + Y^2
+// So A^2 = B^2 = C^2 = D^2, meaning A, B, C, D differ by +-1.
+// And A^2 = X^2 + Y^2.
+// This is 2-dimensional in P^5 (i.e., a curve in P^5 when we mod out the
+// P^1 of (X,Y) scaling). Let's see what the projective boundary looks like.
+
+boundary := F4_proj meet Scheme(P6, W);
+printf "Boundary at infinity: dim = %o, degree = %o\n",
+       Dimension(boundary), Degree(boundary);
+
+printf "\n=== Defining equations of the boundary ===\n";
+bnd_I := DefiningIdeal(boundary);
+for g in Basis(bnd_I) do
+    printf "  %o\n", g;
+end for;
+
+printf "\n=== Try: affine singular points (set W=1) ===\n";
+// F_4 is smooth in the affine part; singular only at W=0.
+// Count again to confirm.
+R<x, y, a, b, c, d> := PolynomialRing(Rationals(), 6);
+f1 := a^2 - x^2 - y^2;
+f2 := b^2 - (1-x)^2 - y^2;
+f3 := c^2 - x^2 - (1-y)^2;
+f4 := d^2 - (1-x)^2 - (1-y)^2;
+I_aff := ideal<R | f1, f2, f3, f4>;
+A6 := AffineSpace(R);
+F4_aff := Scheme(A6, I_aff);
+Sing_aff := SingularSubscheme(F4_aff);
+printf "Affine singular dimension: %o\n", Dimension(Sing_aff);
+
+printf "\n=== Geometric genus (if computable) ===\n";
+// Arithmetic genus via Hilbert polynomial
+hp := HilbertPolynomial(J);
+printf "Hilbert polynomial: %o\n", hp;

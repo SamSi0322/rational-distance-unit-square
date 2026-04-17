@@ -1,0 +1,92 @@
+// f4_node_check.magma
+// Test whether the singular points of F_4 are all ordinary nodes (A_1).
+//
+// A point p is an A_1 node iff the local Hessian of the defining
+// equations has rank = codim (= 3 for F_4 in P^6).
+// Equivalently: the Zariski tangent cone at p is a quadric of max rank.
+//
+// Strategy:
+//   1. Enumerate singular points over Q-bar by solving I + minor conditions.
+//   2. For each component (a finite scheme), compute the multiplicity
+//      and local structure.
+//   3. Classify: all A_1, some higher, or mixed.
+
+S<X, Y, A, B, C, D, W> := PolynomialRing(Rationals(), 7);
+F1 := A^2 - X^2 - Y^2;
+F2 := B^2 - (W-X)^2 - Y^2;
+F3 := C^2 - X^2 - (W-Y)^2;
+F4 := D^2 - (W-X)^2 - (W-Y)^2;
+J := ideal<S | F1, F2, F3, F4>;
+P6 := ProjectiveSpace(S);
+F4_proj := Scheme(P6, J);
+
+printf "=== Affine singular points explicitly ===\n";
+// Work affinely at W = 1 to get ordinary polynomial equations.
+R<x, y, a, b, c, d> := PolynomialRing(Rationals(), 6);
+f1 := a^2 - x^2 - y^2;
+f2 := b^2 - (1-x)^2 - y^2;
+f3 := c^2 - x^2 - (1-y)^2;
+f4 := d^2 - (1-x)^2 - (1-y)^2;
+I_aff := ideal<R | f1, f2, f3, f4>;
+A6 := AffineSpace(R);
+F4_aff := Scheme(A6, I_aff);
+
+Sing_aff := SingularSubscheme(F4_aff);
+printf "Affine singular scheme dim = %o, degree = %o\n",
+    Dimension(Sing_aff), Degree(Sing_aff);
+
+if Dimension(Sing_aff) eq 0 and Degree(Sing_aff) gt 0 then
+    // Try to find the support points
+    printf "\nDefining ideal of affine singular locus:\n";
+    I_sing := DefiningIdeal(Sing_aff);
+    gb := GroebnerBasis(I_sing);
+    printf "Groebner basis size: %o\n", #gb;
+    for i in [1..Min(#gb, 10)] do
+        printf "  g_%o = %o\n", i, gb[i];
+    end for;
+    if #gb gt 10 then
+        printf "  ... (%o more)\n", #gb - 10;
+    end if;
+end if;
+
+printf "\n=== Rational singular points (if any) ===\n";
+// Try to find Q-rational singular points
+pts := RationalPoints(Sing_aff);
+printf "Number of Q-rational singular points: %o\n", #pts;
+for i in [1..Min(#pts, 5)] do
+    printf "  %o\n", pts[i];
+end for;
+
+printf "\n=== Analyze a single singular point for nodality ===\n";
+// Check if F_4 is smooth along certain "degenerate" loci
+// e.g., where x = 0 (then a = +/- y, which is constrained).
+
+// Try point where x = y (then by symmetry things may collapse).
+printf "\nAt the symmetric point x = y:\n";
+I_sym := I_aff + ideal<R | x - y>;
+printf "  dim(F_4 cap {x=y}) = %o\n", Dimension(I_sym);
+
+// Try x = 0
+I_x0 := I_aff + ideal<R | x>;
+printf "  dim(F_4 cap {x=0}) = %o\n", Dimension(I_x0);
+
+// Try x = 1/2, y = 1/2 (center of square)
+I_center := I_aff + ideal<R | 2*x - 1, 2*y - 1>;
+printf "  dim(F_4 cap {x=1/2, y=1/2}) = %o\n", Dimension(I_center);
+if Dimension(I_center) ge 0 then
+    V_center := Scheme(A6, I_center);
+    printf "  degree = %o\n", Degree(V_center);
+end if;
+
+printf "\n=== Check if singular points live on specific hyperplanes ===\n";
+// Test: are all affine singular points on {x = 0, x = 1, y = 0, or y = 1}?
+for h_name in ["x", "1-x", "y", "1-y"] do
+    if h_name eq "x" then h := x;
+    elif h_name eq "1-x" then h := 1-x;
+    elif h_name eq "y" then h := y;
+    else h := 1-y; end if;
+    // Is every point of Sing_aff in V(h)?
+    I_test := DefiningIdeal(Sing_aff) + ideal<R | h>;
+    printf "  Sing_aff cap V(%o): dim = %o\n",
+        h_name, Dimension(Scheme(A6, I_test));
+end for;

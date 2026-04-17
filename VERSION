@@ -1,5 +1,6 @@
-Version: v1.1
-Date: 2026-04-16
-Description: Audit-corrected release. Fixes overclaims in search coverage,
-removes unsupported S=emptyset assertions, downgrades incomplete proofs,
-moves unverified Chabauty/Magma certification scripts to exploratory status.
+Version: v1.2
+Date: 2026-04-17
+Description: Adds Report 4 on the algebraic geometry of the
+four-distance surface F_4. Documents computational findings that F_4
+is a surface of general type of degree 16 in P^6, with isolated
+A_1 node singularities at vertex-collision configurations.

@@ -1,0 +1,48 @@
+// f4_geometry_fixed.magma
+// Geometry of F_4 threefold. Rewritten with single-line ideal syntax.
+
+R<x, y, a, b, c, d> := PolynomialRing(Rationals(), 6);
+
+f1 := a^2 - x^2 - y^2;
+f2 := b^2 - (1-x)^2 - y^2;
+f3 := c^2 - x^2 - (1-y)^2;
+f4 := d^2 - (1-x)^2 - (1-y)^2;
+
+I := ideal<R | f1, f2, f3, f4>;
+
+printf "=== F_4 ideal ===\n";
+printf "f1 = %o\n", f1;
+printf "f2 = %o\n", f2;
+printf "f3 = %o\n", f3;
+printf "f4 = %o\n", f4;
+
+printf "\n=== Dimension ===\n";
+printf "dim(V(I)) = %o\n", Dimension(I);
+
+printf "\n=== British flag check: a^2+d^2-b^2-c^2 mod I ===\n";
+printf "%o\n", NormalForm(a^2 + d^2 - b^2 - c^2, I);
+
+printf "\n=== Minimal primes ===\n";
+MP := MinimalPrimes(I);
+printf "Number: %o\n", #MP;
+for i in [1..#MP] do
+    printf "  Prime %o: dim=%o\n", i, Dimension(MP[i]);
+end for;
+
+printf "\n=== Radical check ===\n";
+printf "I == Radical(I): %o\n", I eq Radical(I);
+
+printf "\n=== Jacobian for singular locus ===\n";
+vars := [x, y, a, b, c, d];
+gens := [f1, f2, f3, f4];
+J := Matrix(R, 4, 6, [Derivative(gens[i], vars[j]) : j in [1..6], i in [1..4]]);
+printf "Jacobian is 4 x 6\n";
+
+// Expected codimension = 6 - 3 = 3, so singular where rank(J) < 3.
+// That means all 3x3 minors of J vanish.
+printf "Computing 3x3 minors...\n";
+M := Minors(J, 3);
+printf "Number of 3x3 minors: %o\n", #M;
+
+Sing := I + ideal<R | M>;
+printf "Singular locus dimension: %o\n", Dimension(Sing);

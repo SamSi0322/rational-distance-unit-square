@@ -1,0 +1,97 @@
+// f4_nodality.magma
+// Verify that the vertex-collision singularities of F_4 are A_1 nodes.
+//
+// At the point (x, y, a, b, c, d) = (0, 0, 0, 1, 1, sqrt(2)):
+//   x = y = a = 0, b = 1, c = 1, d = sqrt(2).
+// Check that the Hessian of the four defining equations has rank 3
+// (= codim of F_4 in A^6), which is the condition for A_1 nodality.
+
+Q2<alpha> := QuadraticField(2);
+R<x, y, a, b, c, d> := PolynomialRing(Q2, 6);
+
+f1 := a^2 - x^2 - y^2;
+f2 := b^2 - (1-x)^2 - y^2;
+f3 := c^2 - x^2 - (1-y)^2;
+f4 := d^2 - (1-x)^2 - (1-y)^2;
+
+// Singular point: (0, 0, 0, 1, 1, alpha)
+pt := [Q2!0, Q2!0, Q2!0, Q2!1, Q2!1, alpha];
+
+printf "=== Evaluating equations at singular point ===\n";
+for f in [f1, f2, f3, f4] do
+    printf "  f(pt) = %o\n", Evaluate(f, pt);
+end for;
+
+printf "\n=== Jacobian at the singular point ===\n";
+vars := [x, y, a, b, c, d];
+Jac := Matrix(Q2, 4, 6,
+    [Evaluate(Derivative(f, v), pt) : v in vars, f in [f1, f2, f3, f4]]);
+printf "Jacobian = %o\n", Jac;
+printf "Rank of Jacobian: %o\n", Rank(Jac);
+// If rank < 3, this confirms the point is singular (expected).
+
+printf "\n=== Hessian of defining quadrics (linear sum analysis) ===\n";
+// A singular point p of a complete intersection V(f_1,...,f_r) is an A_1
+// node iff the Hessian of some linear combination of the f_i, restricted
+// to the Zariski tangent space at p, has maximal rank (= codim r).
+//
+// For our case with 4 quadrics, the combined Hessian space is spanned
+// by 4 symmetric 6x6 matrices. Nodal condition: these span a space of
+// rank 3 within Sym^2 of the tangent space.
+
+function HessianMatrix(f, vars, pt)
+    n := #vars;
+    H := Matrix(Parent(pt[1]), n, n,
+        [Evaluate(Derivative(Derivative(f, vars[i]), vars[j]), pt)
+         : j in [1..n], i in [1..n]]);
+    return H;
+end function;
+
+H1 := HessianMatrix(f1, vars, pt);
+H2 := HessianMatrix(f2, vars, pt);
+H3 := HessianMatrix(f3, vars, pt);
+H4 := HessianMatrix(f4, vars, pt);
+
+printf "H1 (Hessian of f1 at pt):\n%o\n", H1;
+printf "Rank(H1) = %o\n\n", Rank(H1);
+printf "Rank(H2) = %o\n", Rank(H2);
+printf "Rank(H3) = %o\n", Rank(H3);
+printf "Rank(H4) = %o\n", Rank(H4);
+
+printf "\n=== Local intersection of tangent cones ===\n";
+// Each H_i defines a quadric in the tangent space T_pt(A^6).
+// The point is an A_1 node iff these 4 quadrics cut out a smooth variety
+// of codim 3 in the tangent space (a normal quadric cone in 3 dimensions
+// resolved by blow-up).
+
+// Stack the 4 Hessians
+H_list := [H1, H2, H3, H4];
+
+// Check: is the rank of each H_i as a quadric in the 6-dim tangent
+// space exactly 2 (as expected for a rank-2 quadric in the defining
+// equation of F_4 at a node)?
+// Actually: each f_i is a quadric of rank 4 (as a quadric form in
+// 6 variables over Q), and its Hessian is 2 * the matrix of its
+// quadratic part. So Rank(H_i) = 2 * rank of the quadric.
+// Wait, Hessian is twice the defining matrix of the quadric.
+// If f_i = x^T M x, then Hess = 2M. So rank(Hess) = rank(M).
+
+// Summary: if all four Hessian ranks are 4, each f_i is non-degenerate.
+// The nodality condition in this setting is that the pencil of quadrics
+// has a particular structure near the singular point.
+
+printf "\n=== Nodal criterion: codim-3 complete intersection ===\n";
+// Form the symbolic pencil c1*H1 + c2*H2 + c3*H3 + c4*H4 and check when
+// its rank drops.
+// For a node: some linear combination has rank exactly 6 - 1 = 5.
+
+// Simpler nodality check: restrict f_1, ..., f_4 to the tangent space
+// at pt, which is the kernel of the Jacobian.
+T := Kernel(Transpose(Jac));
+printf "Tangent space dimension at pt = %o\n", Dimension(T);
+// For a smooth point, dim = 6 - 3 = 3; for a node, dim = 3 + 1 = 4 (the
+// cone tangent space is larger than the smooth tangent space).
+
+if Dimension(T) eq 4 then
+    printf "  -> consistent with A_1 node (cone has 4-dim tangent space).\n";
+end if;

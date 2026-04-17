@@ -1,11 +1,35 @@
-# Exploratory scripts
+# Exploratory Scripts (Not Used in Final Conclusions)
 
-These are approaches I tried that didn't pan out. They're here for completeness but I don't rely on any of them in my conclusions.
+The scripts in this directory represent exploratory computations that
+were part of the investigation but are **not relied upon** in the
+final conclusions of the archive.
 
-**final_certify_Csw.m** — Magma script that computes a rank bound on the Jacobian (1 <= rank <= 2, which is correct). But the script goes on to claim S = emptyset based on a Chabauty-Coleman argument that I couldn't get to work properly. The rank bound is the only part I'd stand behind.
+## Why these are exploratory
 
-**chabauty_final.py, chabauty_csw_patched.sage** — My attempts at Chabauty-Coleman disk analysis. These have real errors: I was using omega_1 as if it were an annihilating differential (it's not, because E_sw has rank 1), and the valuation argument for the (0, ±2) disks has a wrong sign. I kept them because the approach is interesting even if my execution was flawed.
+- **final_certify_Csw.m**: Computes a Jacobian rank bound via Magma's
+  RankBounds. The rank bound itself is correct, but the script's
+  concluding assertions ("S = empty set", "CERTIFICATION COMPLETE")
+  depend on a Chabauty-Coleman analysis whose validity was not
+  established (see Report 1 for the structural gap).
 
-**padic_log2.sage** — Computes a p-adic logarithm. The computation is probably fine on its own but it feeds into the Chabauty scripts above, so it's moot.
+- **chabauty_final.py**, **chabauty_csw_patched.sage**: Implement
+  a Chabauty-Coleman disk analysis. The local arguments contain
+  errors identified in audit (use of non-annihilating differentials,
+  incorrect valuation claims). Not used in any final result.
 
-**mod3_proof.py** — Tries to prove S = emptyset from the fact that there are no F_3-solutions. The F_3 non-existence is real, but the jump to "no Q_3-solution" is wrong: you can have 3 in the denominator of x or y, which escapes the F_3 analysis entirely. (I do use the correct mod-3 *necessary condition* in my search scripts, but that's derived separately and doesn't claim a local obstruction.)
+- **padic_log2.sage**: Computes a p-adic formal group logarithm.
+  The computation itself may be correct, but it feeds into the
+  Chabauty analysis above, which is not used.
+
+- **mod3_proof.py**: Contains an argument that no F_3 solutions exist
+  for the four-distance system. While the F_3 non-existence is correct,
+  the script's conclusion "S = empty" is invalid because Q_3 solutions
+  exist with 3 in the denominator (x = u/3 for 3-adic units u).
+  The mod 3 filter used in the search scripts (Report 2) is a correct
+  necessary condition derived independently; this script is not the
+  source of that filter.
+
+## Summary
+
+These scripts document explored approaches. They should not be cited
+as establishing any result about the original problem.
